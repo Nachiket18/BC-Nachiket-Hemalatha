@@ -1,6 +1,27 @@
 /* basic directed graph type */
+/* the implementation uses adjacency lists
+ * represented as variable-length arrays */
+
+/* these arrays may or may not be sorted: if one gets long enough
+ * and you call graph_has_edge on its source, it will be */
+
+
+struct graph {
+    int n;              /* number of vertices */
+    int m;              /* number of edges */
+    struct successors {
+        int d;          /* number of successors */
+        int len;        /* number of slots in array */
+        char is_sorted; /* true if list_vertices is already sorted */
+        int list_vertices[1];    /* actual list_vertices of successors */
+    } *alist[1];
+};
+
+
+/* basic directed graph type */
 
 typedef struct graph *Graph;
+
 
 /* create a new graph with n vertices labeled 0..n-1 and no edges */
 Graph graph_create(int n);
@@ -28,3 +49,5 @@ int graph_has_edge(Graph, int source, int sink);
 void graph_foreach(Graph g, int source,
         void (*f)(Graph g, int source, int sink, void *data),
         void *data);
+
+

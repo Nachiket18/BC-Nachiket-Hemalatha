@@ -3,23 +3,6 @@
 
 #include "graph.h"
 
-/* basic directed graph type */
-/* the implementation uses adjacency lists
- * represented as variable-length arrays */
-
-/* these arrays may or may not be sorted: if one gets long enough
- * and you call graph_has_edge on its source, it will be */
-
-struct graph {
-    int n;              /* number of vertices */
-    int m;              /* number of edges */
-    struct successors {
-        int d;          /* number of successors */
-        int len;        /* number of slots in array */
-        char is_sorted; /* true if list is already sorted */
-        int list[1];    /* actual list of successors */
-    } *alist[1];
-};
 
 /* create a new graph with n vertices labeled 0..n-1 and no edges */
 Graph
@@ -42,7 +25,7 @@ graph_create(int n)
         g->alist[i]->len = 1;
         g->alist[i]->is_sorted= 1;
     }
-    
+
     return g;
 }
 
@@ -69,12 +52,12 @@ graph_add_edge(Graph g, int u, int v)
     while(g->alist[u]->d >= g->alist[u]->len) {
         g->alist[u]->len *= 2;
         g->alist[u] =
-            realloc(g->alist[u], 
+            realloc(g->alist[u],
                 sizeof(struct successors) + sizeof(int) * (g->alist[u]->len - 1));
     }
 
     /* now add the new sink */
-    g->alist[u]->list[g->alist[u]->d++] = v;
+    g->alist[u]->list_vertices[g->alist[u]->d++] = v;
     g->alist[u]->is_sorted = 0;
 
     /* bump edge count */
@@ -128,16 +111,16 @@ graph_has_edge(Graph g, int source, int sink)
     if(graph_out_degree(g, source) >= BSEARCH_THRESHOLD) {
         /* make sure it is sorted */
         if(! g->alist[source]->is_sorted) {
-            qsort(g->alist[source]->list,
+            qsort(g->alist[source]->list_vertices,
                     g->alist[source]->d,
                     sizeof(int),
                     intcmp);
         }
-        
+
         /* call bsearch to do binary search for us */
-        return 
+        return
             bsearch(&sink,
-                    g->alist[source]->list,
+                    g->alist[source]->list_vertices,
                     g->alist[source]->d,
                     sizeof(int),
                     intcmp)
@@ -146,7 +129,7 @@ graph_has_edge(Graph g, int source, int sink)
         /* just do a simple linear search */
         /* we could call lfind for this, but why bother? */
         for(i = 0; i < g->alist[source]->d; i++) {
-            if(g->alist[source]->list[i] == sink) return 1;
+            if(g->alist[source]->list_vertices[i] == sink) return 1;
         }
         /* else */
         return 0;
@@ -166,6 +149,28 @@ graph_foreach(Graph g, int source,
     assert(source < g->n);
 
     for(i = 0; i < g->alist[source]->d; i++) {
-        f(g, source, g->alist[source]->list[i], data);
+        f(g, source, g->alist[source]->list_vertices[i], data);
     }
 }
+
+
+
+// Graph spanning_tree(Graph g)
+// {
+//     int source = 0;
+//     int visited[g->n];
+//     while(1){
+//         for (int i=0; i < g->alist[source]->d; i++){
+//             if visited[i] != 1{
+
+
+//             }
+//         }
+
+//     }
+
+
+
+// }
+
+
