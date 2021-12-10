@@ -64,6 +64,20 @@ graph_add_edge(Graph g, int u, int v)
     g->m++;
 }
 
+void remove_last_edge(Graph g,int u ){
+
+    int* neighbours = g ->alist[u]-> list_vertices;
+    int length_nb = g->alist[u]->d;
+    g ->alist[u] = realloc(g ->alist[u],sizeof(struct successors) + sizeof(int) * (g ->alist[u]->len - 2));
+    for (int j=0; j < (length_nb - 2); j++){
+        graph_add_edge(g,u,neighbours[j]);
+    }
+    g -> alist[u]-> d = length_nb - 1;
+    g -> m--;
+
+}
+
+
 /* return the number of vertices in the graph */
 int
 graph_vertex_count(Graph g)
@@ -155,22 +169,7 @@ graph_foreach(Graph g, int source,
 
 
 
-// Graph spanning_tree(Graph g)
-// {
-//     int source = 0;
-//     int visited[g->n];
-//     while(1){
-//         for (int i=0; i < g->alist[source]->d; i++){
-//             if visited[i] != 1{
 
 
-//             }
-//         }
-
-//     }
-
-
-
-// }
 
 

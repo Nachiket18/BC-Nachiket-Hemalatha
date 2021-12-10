@@ -33,6 +33,8 @@ void graph_destroy(Graph);
 /* doing this more than once may have unpredictable results */
 void graph_add_edge(Graph, int source, int sink);
 
+void remove_last_edge(Graph g,int u );
+
 /* return the number of vertices/edges in the graph */
 int graph_vertex_count(Graph);
 int graph_edge_count(Graph);
